@@ -34,9 +34,15 @@
     <com.google.android.material.tabs.TabLayout
         android:id="@+id/tabLayout"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="50dp"
+        android:background="@drawable/tab_background"
         app:tabGravity="fill"
         app:tabMode="fixed"
+        android:layout_marginHorizontal="20dp"
+        app:tabIndicator="@null"
+        app:tabTextAppearance="@style/TabTextStyle"
+        app:tabBackground="@drawable/tab_selector"
+        app:tabSelectedTextColor="@android:color/black"
         app:tabTextColor="@color/gray"
         app:layout_constraintTop_toBottomOf="@id/tvSubtitle"
         app:layout_constraintStart_toStartOf="parent"
@@ -55,6 +61,7 @@
             android:text="Register"/>
 
     </com.google.android.material.tabs.TabLayout>
+
     <FrameLayout
         android:id="@+id/frameContainer"
         android:layout_width="match_parent"
