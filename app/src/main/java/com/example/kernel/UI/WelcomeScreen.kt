@@ -50,12 +50,12 @@ class WelcomeScreen : AppCompatActivity() {
         startTextSwitching()
 
         binding.btnLogin.setOnClickListener {
-            intent = Intent(this, SignInUp::class.java)
+            intent = Intent(this, MainActivity::class.java)
             startActivity(intent)
         }
 
         binding.tvCreate.setOnClickListener {
-            intent = Intent(this, SignInUp::class.java)
+            intent = Intent(this, MainActivity::class.java)
             startActivity(intent)
         }
     }
