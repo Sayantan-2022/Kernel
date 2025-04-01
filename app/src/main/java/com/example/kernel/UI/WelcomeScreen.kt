@@ -9,6 +9,7 @@ import android.view.View
 import android.view.WindowInsetsController
 import android.view.WindowManager
 import android.view.animation.AnimationUtils
+import android.widget.Button
 import android.widget.TextSwitcher
 import android.widget.TextView
 import androidx.annotation.RequiresApi
@@ -19,7 +20,9 @@ import com.example.kernel.databinding.ActivityWelcomeScreenBinding
 
 class WelcomeScreen : AppCompatActivity() {
 
-    private lateinit var binding:ActivityWelcomeScreenBinding
+    private lateinit var textSwitcher : TextSwitcher
+    private lateinit var btnLogin: Button
+    private lateinit var tvCreate: TextView
     private val descriptions = listOf(
         "We're excited to help you book and manage your service appointments with ease.",
         "Get the latest updates and news instantly.",
@@ -33,10 +36,11 @@ class WelcomeScreen : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_welcome_screen)
 
-        binding = ActivityWelcomeScreenBinding.inflate(layoutInflater)
-        setContentView(binding.root)
+        textSwitcher = findViewById(R.id.textSwitcher)
+        btnLogin = findViewById(R.id.btnLogin)
+        tvCreate = findViewById(R.id.tvCreate)
 
-        binding.textSwitcher.setFactory {
+        textSwitcher.setFactory {
             TextView(this).apply {
                 textSize = 16f
                 setTextColor(resources.getColor(android.R.color.darker_gray, theme))
@@ -44,18 +48,18 @@ class WelcomeScreen : AppCompatActivity() {
             }
         }
 
-        binding.textSwitcher.inAnimation = AnimationUtils.loadAnimation(this, android.R.anim.fade_in)
-        binding.textSwitcher.outAnimation = AnimationUtils.loadAnimation(this, android.R.anim.fade_out)
+        textSwitcher.inAnimation = AnimationUtils.loadAnimation(this, android.R.anim.fade_in)
+        textSwitcher.outAnimation = AnimationUtils.loadAnimation(this, android.R.anim.fade_out)
 
         startTextSwitching()
 
-        binding.btnLogin.setOnClickListener {
-            intent = Intent(this, MainActivity::class.java)
+        btnLogin.setOnClickListener {
+            intent = Intent(this, SignInUp::class.java)
             startActivity(intent)
         }
 
-        binding.tvCreate.setOnClickListener {
-            intent = Intent(this, MainActivity::class.java)
+        tvCreate.setOnClickListener {
+            intent = Intent(this, SignInUp::class.java)
             startActivity(intent)
         }
     }
@@ -63,9 +67,9 @@ class WelcomeScreen : AppCompatActivity() {
     private fun startTextSwitching() {
         handler.postDelayed(object : Runnable {
             override fun run() {
-                binding.textSwitcher.setText(descriptions[index])
+                textSwitcher.setText(descriptions[index])
                 index = (index + 1) % descriptions.size
-                handler.postDelayed(this, 3000) // Change text every 3 seconds
+                handler.postDelayed(this, 3000)
             }
         }, 0)
     }
