@@ -4,7 +4,15 @@
     <string name="create_an_account">Create an account</string>
     <string name="welcome_to_kernel">Welcome to Kernel</string>
     <string name="todo">TODO</string>
-    <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="register">Register</string>
+    <string name="e_mail_id">E-mail ID</string>
+    <string name="password">Password</string>
+    <string name="remember_me">Remember me</string>
+    <string name="forget_password">Forget Password?</string>
+    <string name="or_login_with">Or login with</string>
+    <string name="google">Google</string>
+    <string name="user">User</string>
+    <string name="organizer">Organizer</string>
+    <string name="continue_">Continue</string>
 </resources>

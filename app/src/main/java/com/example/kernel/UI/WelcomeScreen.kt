@@ -15,8 +15,6 @@ import android.widget.TextView
 import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
 import com.example.kernel.R
-import com.example.kernel.databinding.ActivitySignInUpBinding
-import com.example.kernel.databinding.ActivityWelcomeScreenBinding
 
 class WelcomeScreen : AppCompatActivity() {
 
