@@ -3,7 +3,7 @@ package com.example.kernel.UI
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.viewpager2.widget.ViewPager2
-import com.example.kernel.Adapters.ViewPagerAdapter
+import com.example.kernel.Adapters.SignInUpPagerAdapter
 import com.example.kernel.R
 import com.google.android.material.tabs.TabLayout
 import com.google.android.material.tabs.TabLayoutMediator
@@ -20,7 +20,7 @@ class SignInUp : AppCompatActivity() {
         tabLayout = findViewById(R.id.tabLayout)
         viewPager = findViewById(R.id.viewPager)
 
-        val adapter = ViewPagerAdapter(this)
+        val adapter = SignInUpPagerAdapter(this)
         viewPager.adapter = adapter
 
         TabLayoutMediator(tabLayout, viewPager) { tab, position ->

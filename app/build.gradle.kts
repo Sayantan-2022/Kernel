@@ -1,6 +1,7 @@
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
+    alias(libs.plugins.google.gms.google.services)
 }
 
 android {
@@ -45,8 +46,22 @@ dependencies {
     implementation(libs.androidx.constraintlayout)
     implementation(libs.androidx.navigation.fragment.ktx)
     implementation(libs.androidx.navigation.ui.ktx)
+    implementation(libs.androidx.credentials)
+    implementation(libs.androidx.credentials.play.services.auth)
+    implementation(libs.googleid)
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
-    implementation("com.github.qamarelsafadi:CurvedBottomNavigation:0.1.3")
     androidTestImplementation(libs.androidx.espresso.core)
+
+    //Custom Navigation Bar
+    implementation(libs.curvedbottomnavigation)
+
+    //Firebase Services
+    implementation(platform(libs.firebase.bom))
+    implementation(libs.firebase.database)
+    implementation(libs.firebase.auth)
+
+    //google authorization services
+    implementation(libs.play.services.auth)
+    implementation(libs.googleid)
 }

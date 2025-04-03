@@ -15,4 +15,8 @@
     <string name="user">User</string>
     <string name="organizer">Organizer</string>
     <string name="continue_">Continue</string>
+    <string name="full_name">Full Name</string>
+    <string name="phone_no">Phone No.</string>
+    <string name="G_client_id">111417793877-fgtipn0ftvcbo0uluf3ugct4p7a6bi6k.apps.googleusercontent.com</string>
+
 </resources>
