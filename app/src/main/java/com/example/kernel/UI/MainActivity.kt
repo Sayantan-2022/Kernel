@@ -7,7 +7,6 @@ import com.example.kernel.R
 import com.example.kernel.UI.fragments.HomeFragment
 import com.example.kernel.UI.fragments.NotificationFragment
 import com.example.kernel.UI.fragments.SettingFragment
-import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.qamar.curvedbottomnaviagtion.CurvedBottomNavigation
 
 class MainActivity : AppCompatActivity() {
