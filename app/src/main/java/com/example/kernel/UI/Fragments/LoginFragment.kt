@@ -16,6 +16,7 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity.RESULT_OK
 import com.example.kernel.R
 import com.example.kernel.UI.MainActivity
+import com.example.kernel.UI.OrganizerActivity
 import com.example.kernel.UI.SignInUp
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount
@@ -28,10 +29,14 @@ import com.google.firebase.auth.FirebaseAuthInvalidCredentialsException
 import com.google.firebase.auth.FirebaseAuthUserCollisionException
 import com.google.firebase.auth.FirebaseAuthWeakPasswordException
 import com.google.firebase.auth.GoogleAuthProvider
+import com.google.firebase.database.DatabaseException
+import com.google.firebase.database.DatabaseReference
+import com.google.firebase.database.FirebaseDatabase
 
 class LoginFragment : Fragment(R.layout.fragment_login) {
 
     private var firebaseAuth : FirebaseAuth = FirebaseAuth.getInstance()
+    private val database : DatabaseReference = FirebaseDatabase.getInstance().getReference("Accounts")
     private lateinit var googleSignInClient : GoogleSignInClient
     private lateinit var etEmail : EditText
     private lateinit var etPassword : EditText
@@ -53,12 +58,24 @@ class LoginFragment : Fragment(R.layout.fragment_login) {
                         if(user != null){
                             firebaseAuth.currentUser?.reload()?.addOnCompleteListener { reloadTask ->
                                 if (reloadTask.isSuccessful) {
-                                    Log.d("AuthDebug", "User reloaded successfully")
                                     val userMail = firebaseAuth.currentUser?.email
-                                    Log.d("AuthDebug", "User Email after reload: $userMail")
 
                                     if (userMail != null) {
-                                        initializeLogin(userMail)
+                                        var flag = 0
+                                        database.get().addOnSuccessListener { snack ->
+                                            for(uid in snack.children){
+                                                if(uid.child("email").value.toString() == userMail){
+                                                    flag = 1
+                                                    initializeLogin(userMail, uid.key.toString(), uid.child("userType").value.toString())
+                                                }
+                                            }
+                                        }
+                                        if(flag == 0) firebaseAuth.removeAuthStateListener {
+                                            Log.d("AuthDebug", "User email does not exist in Accounts!")
+                                            Toast.makeText(requireContext(),
+                                                "No Account with this email!\nPlease Register.",
+                                                Toast.LENGTH_SHORT)
+                                        }
                                     } else {
                                         Log.e("AuthDebug", "User email still NULL after reload")
                                     }
@@ -73,10 +90,14 @@ class LoginFragment : Fragment(R.layout.fragment_login) {
                         Log.e("AuthDebug", "Firebase Sign-In failed", it.exception)
                     }
                 }.addOnFailureListener {
-                    Toast.makeText(this.context, "There is a problem from our side,\nPLease try again later!", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(this.context,
+                        "There is a problem from our side,\nPLease try again later!",
+                        Toast.LENGTH_SHORT).show()
                 }
             } catch (e : Exception){
-                Toast.makeText(this.context, "There is a problem from our side,\nPLease try again later!", Toast.LENGTH_SHORT).show()
+                Toast.makeText(this.context,
+                    "There is a problem from our side,\nPLease try again later!",
+                    Toast.LENGTH_SHORT).show()
             }
         }
     })
@@ -133,25 +154,37 @@ class LoginFragment : Fragment(R.layout.fragment_login) {
         }
     }
 
-    private fun initializeLogin(userMail: String) {
-        val intent = Intent(this.context, MainActivity::class.java)
-        intent.putExtra("email", userMail)
-        intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
-        startActivity(intent)
-        SignInUp().finish()
+    private fun initializeLogin(userMail: String, uid : String, userType : String) {
+        if (userType == "Organizer"){
+            val intent = Intent(this.context, OrganizerActivity::class.java)
+            intent.putExtra("email", userMail)
+            intent.putExtra("uid", uid)
+            intent.putExtra("userType", userType)
+            intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+            startActivity(intent)
+            requireActivity().finish()
+        } else {
+            val intent = Intent(this.context, MainActivity::class.java)
+            intent.putExtra("email", userMail)
+            intent.putExtra("uid", uid)
+            intent.putExtra("userType", userType)
+            intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+            startActivity(intent)
+            requireActivity().finish()
+        }
     }
 
     private fun readData(email: String, password: String) {
         firebaseAuth.signInWithEmailAndPassword(email, password)
             .addOnCompleteListener {
                 if(it.isSuccessful){
-                    Toast.makeText(this.context, "Sign In Successful!", Toast.LENGTH_SHORT).show()
-
-                    val intent = Intent(this.context, MainActivity::class.java)
-                    intent.putExtra("email", email)
-                    intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
-                    startActivity(intent)
-                    SignInUp().finish()
+                    database.get().addOnSuccessListener { snack ->
+                        for(uid in snack.children){
+                            if(uid.child("email").value.toString() == email){
+                                initializeLogin(email, uid.key.toString(), uid.child("userType").value.toString())
+                            }
+                        }
+                    }
                 } else {
                     exceptionHandler(it.exception)
                 }
