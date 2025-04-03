@@ -26,6 +26,8 @@ class MainActivity : AppCompatActivity() {
         )
 
         bottomNavigation.setOnClickMenuListener {
+
+
             when(it.id){
                 1 -> {
                     replaceFragment(NotificationFragment())

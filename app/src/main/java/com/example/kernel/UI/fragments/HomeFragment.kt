@@ -12,3 +12,7 @@ class HomeFragment :  Fragment(R.layout.activity_fragment_home)  {
     }
 
 }
+
+
+
+
