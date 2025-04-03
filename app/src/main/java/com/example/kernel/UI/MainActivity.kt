@@ -4,9 +4,9 @@ import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import com.example.kernel.R
-import com.example.kernel.UI.fragments.HomeFragment
-import com.example.kernel.UI.fragments.NotificationFragment
-import com.example.kernel.UI.fragments.SettingFragment
+import com.example.kernel.UI.Fragments.HomeFragment
+import com.example.kernel.UI.Fragments.NotificationFragment
+import com.example.kernel.UI.Fragments.SettingFragment
 import com.qamar.curvedbottomnaviagtion.CurvedBottomNavigation
 
 class MainActivity : AppCompatActivity() {

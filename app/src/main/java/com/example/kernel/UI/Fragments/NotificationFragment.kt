@@ -1,9 +1,7 @@
-package com.example.kernel.UI.fragments
+package com.example.kernel.UI.Fragments
 
 import android.os.Bundle
-import android.view.LayoutInflater
 import android.view.View
-import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import com.example.kernel.R
 

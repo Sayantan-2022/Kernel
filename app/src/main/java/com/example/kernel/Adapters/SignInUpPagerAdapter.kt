@@ -3,8 +3,8 @@ package com.example.kernel.Adapters
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentActivity
 import androidx.viewpager2.adapter.FragmentStateAdapter
-import com.example.kernel.UI.fragments.LoginFragment
-import com.example.kernel.UI.fragments.SignUpFragment
+import com.example.kernel.UI.Fragments.LoginFragment
+import com.example.kernel.UI.Fragments.SignUpFragment
 
 class SignInUpPagerAdapter(activity: FragmentActivity) : FragmentStateAdapter(activity) {
     override fun getItemCount(): Int = 2
