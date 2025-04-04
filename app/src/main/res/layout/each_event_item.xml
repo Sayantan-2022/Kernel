@@ -18,7 +18,7 @@
 
         <!-- Event Name -->
         <TextView
-            android:id="@+id/event_name"
+            android:id="@+id/tv_event_name"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Event Name"
@@ -29,7 +29,7 @@
 
         <!-- Event Brief Description -->
         <TextView
-            android:id="@+id/event_detail"
+            android:id="@+id/tv_event_detail"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Brief detail about the event goes here."
@@ -39,7 +39,7 @@
 
         <!-- Event Hashtag -->
         <TextView
-            android:id="@+id/event_hashtag"
+            android:id="@+id/tv_event_hashtags"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="#EventHashtag"
