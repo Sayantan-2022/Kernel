@@ -64,50 +64,6 @@ class HomeFragment :  Fragment(R.layout.fragment_home)  {
                     TODO()
                 }
             })
-
-            /*if (eventList.isEmpty()) {
-                val fragmentManager = parentFragmentManager
-                val fragmentTransaction = fragmentManager.beginTransaction()
-                fragmentTransaction.replace(R.id.fragment_container, EmptyEventFragment())
-                fragmentTransaction.commit()
-            }*/
         }
-
-        /*database.addValueEventListener(object : ValueEventListener {
-            override fun onDataChange(snapshot: DataSnapshot) {
-                if (!isAdded) return
-                val EventList = ArrayList<EventData>()
-
-                for (EventsSnapshot in snapshot.children) {
-                    val data = EventsSnapshot.getValue(EventData::class.java)
-                    if (data != null) {
-                        EventList.add(data)
-                    }
-                }
-
-                progressBar.visibility = View.GONE
-
-
-                if (EventList.isEmpty() && isAdded) {
-                    val fragmentManager = parentFragmentManager
-                    val fragmentTransaction = fragmentManager.beginTransaction()
-                    fragmentTransaction.replace(R.id.fragment_container, EmptyEventFragment())
-                    fragmentTransaction.commit()
-                }
-                else if (isAdded) eventAdapter.updateData(EventList)
-
-            }
-
-            override fun onCancelled(error: DatabaseError) {
-                if (!isAdded) return
-                Toast.makeText(
-                    requireContext(),
-                    "Failed to load bookmarks: ${error.message}",
-                    Toast.LENGTH_SHORT
-
-                ).show()
-            }
-
-        })*/
     }
 }
