@@ -61,7 +61,6 @@ class HomeFragment :  Fragment(R.layout.fragment_home)  {
 
             eventAdapter.setOnItemClickListener(object : EventAdapter.onItemClickListener {
                 override fun onItemClicking(position: Int) {
-                    TODO()
                 }
             })
         }
