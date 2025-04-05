@@ -45,62 +45,62 @@ class LoginFragment : Fragment(R.layout.fragment_login) {
     private lateinit var btnGoogle : Button
     private val activityResultLauncher : ActivityResultLauncher<Intent> = registerForActivityResult(
         ActivityResultContracts.StartActivityForResult(), ActivityResultCallback {
-            result ->
-        if(result.resultCode == RESULT_OK){
-            val accountTask : Task<GoogleSignInAccount> = GoogleSignIn.getSignedInAccountFromIntent(result.data)
-            try {
-                val signInAccount : GoogleSignInAccount = accountTask.result
-                val authCredential : AuthCredential = GoogleAuthProvider.getCredential(signInAccount.idToken, null)
+                result ->
+            if(result.resultCode == RESULT_OK){
+                val accountTask : Task<GoogleSignInAccount> = GoogleSignIn.getSignedInAccountFromIntent(result.data)
+                try {
+                    val signInAccount : GoogleSignInAccount = accountTask.result
+                    val authCredential : AuthCredential = GoogleAuthProvider.getCredential(signInAccount.idToken, null)
 
-                firebaseAuth.signInWithCredential(authCredential).addOnCompleteListener {
-                    if(it.isSuccessful){
-                        val user = firebaseAuth.currentUser
-                        if(user != null){
-                            firebaseAuth.currentUser?.reload()?.addOnCompleteListener { reloadTask ->
-                                if (reloadTask.isSuccessful) {
-                                    val userMail = firebaseAuth.currentUser?.email
+                    firebaseAuth.signInWithCredential(authCredential).addOnCompleteListener {
+                        if(it.isSuccessful){
+                            val user = firebaseAuth.currentUser
+                            if(user != null){
+                                firebaseAuth.currentUser?.reload()?.addOnCompleteListener { reloadTask ->
+                                    if (reloadTask.isSuccessful) {
+                                        val userMail = firebaseAuth.currentUser?.email
 
-                                    if (userMail != null) {
-                                        var flag = 0
-                                        database.get().addOnSuccessListener { snack ->
-                                            for(uid in snack.children){
-                                                if(uid.child("email").value.toString() == userMail){
-                                                    flag = 1
-                                                    initializeLogin(userMail, uid.key.toString(), uid.child("userType").value.toString())
+                                        if (userMail != null) {
+                                            var flag = 0
+                                            database.get().addOnSuccessListener { snack ->
+                                                for(uid in snack.children){
+                                                    if(uid.child("email").value.toString() == userMail){
+                                                        flag = 1
+                                                        initializeLogin(userMail, uid.key.toString(), uid.child("userType").value.toString())
+                                                    }
                                                 }
                                             }
-                                        }
-                                        if(flag == 0) firebaseAuth.removeAuthStateListener {
-                                            Log.d("AuthDebug", "User email does not exist in Accounts!")
-                                            Toast.makeText(requireContext(),
-                                                "No Account with this email!\nPlease Register.",
-                                                Toast.LENGTH_SHORT)
+                                            if(flag == 0) firebaseAuth.removeAuthStateListener {
+                                                Log.d("AuthDebug", "User email does not exist in Accounts!")
+                                                Toast.makeText(requireContext(),
+                                                    "No Account with this email!\nPlease Register.",
+                                                    Toast.LENGTH_SHORT)
+                                            }
+                                        } else {
+                                            Log.e("AuthDebug", "User email still NULL after reload")
                                         }
                                     } else {
-                                        Log.e("AuthDebug", "User email still NULL after reload")
+                                        Log.e("AuthDebug", "User reload failed", reloadTask.exception)
                                     }
-                                } else {
-                                    Log.e("AuthDebug", "User reload failed", reloadTask.exception)
                                 }
+                            } else {
+                                Log.e("AuthDebug", "Sign-in successful, but user is null")
                             }
                         } else {
-                            Log.e("AuthDebug", "Sign-in successful, but user is null")
+                            Log.e("AuthDebug", "Firebase Sign-In failed", it.exception)
                         }
-                    } else {
-                        Log.e("AuthDebug", "Firebase Sign-In failed", it.exception)
+                    }.addOnFailureListener {
+                        Toast.makeText(this.context,
+                            "There is a problem from our side,\nPLease try again later!",
+                            Toast.LENGTH_SHORT).show()
                     }
-                }.addOnFailureListener {
+                } catch (e : Exception){
                     Toast.makeText(this.context,
                         "There is a problem from our side,\nPLease try again later!",
                         Toast.LENGTH_SHORT).show()
                 }
-            } catch (e : Exception){
-                Toast.makeText(this.context,
-                    "There is a problem from our side,\nPLease try again later!",
-                    Toast.LENGTH_SHORT).show()
             }
-        }
-    })
+        })
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)

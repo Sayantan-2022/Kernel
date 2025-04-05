@@ -11,11 +11,11 @@ import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.kernel.Adapters.EventAdapter
+import com.example.kernel.Components.ChatMessage
 import com.example.kernel.Components.EventData
 import com.example.kernel.R
-import com.google.android.gms.auth.api.signin.GoogleSignIn
-import com.google.android.gms.auth.api.signin.GoogleSignInClient
-import com.google.android.gms.auth.api.signin.GoogleSignInOptions
+import com.example.kernel.UI.LiveChatActivity
+
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.DataSnapshot
@@ -33,7 +33,6 @@ class HomeFragment :  Fragment(R.layout.fragment_home)  {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
         progressBar = view.findViewById(R.id.progressBar)
         val fab = view.findViewById<FloatingActionButton>(R.id.fab)
         recyclerView = view.findViewById(R.id.recyclerView)
@@ -44,11 +43,13 @@ class HomeFragment :  Fragment(R.layout.fragment_home)  {
         progressBar.visibility = View.VISIBLE
 
         database.get().addOnSuccessListener { snack ->
+            eventList.clear()
             for(key in snack.children){
                 Log.d("EventData", "${key.value}")
                 val data = key.getValue(EventData::class.java)
-
-                if (data != null) {
+                val eventId = key.key
+                if (data != null && eventId != null) {
+                    data.eventId = eventId
                     eventList.add(data)
                 }
             }
@@ -61,7 +62,8 @@ class HomeFragment :  Fragment(R.layout.fragment_home)  {
 
             eventAdapter.setOnItemClickListener(object : EventAdapter.onItemClickListener {
                 override fun onItemClicking(position: Int) {
-                    TODO()
+                    val intent = Intent(requireContext(), LiveChatActivity::class.java)
+                    startActivity(intent)
                 }
             })
         }

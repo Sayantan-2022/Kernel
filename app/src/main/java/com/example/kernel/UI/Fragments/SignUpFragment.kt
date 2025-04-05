@@ -1,9 +1,11 @@
 package com.example.kernel.UI.Fragments
 
+import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.util.Patterns
 import android.view.View
+import android.view.inputmethod.InputMethodManager
 import android.widget.Button
 import android.widget.EditText
 import android.widget.RadioButton
@@ -13,6 +15,8 @@ import androidx.fragment.app.Fragment
 import com.example.kernel.Components.MyAccount
 import com.example.kernel.R
 import com.example.kernel.UI.MainActivity
+import com.example.kernel.UI.OrganizerActivity
+import com.google.android.material.textfield.TextInputEditText
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseAuthInvalidCredentialsException
 import com.google.firebase.auth.FirebaseAuthUserCollisionException
@@ -23,9 +27,9 @@ import com.google.firebase.database.FirebaseDatabase
 class SignUpFragment : Fragment(R.layout.fragment_sign_up) {
 
     private lateinit var etName : EditText
-    private lateinit var etPassword : EditText
+    private lateinit var etPassword : TextInputEditText
     private lateinit var etEmail : EditText
-    private lateinit var etPhone : EditText
+    private lateinit var etPhone : TextInputEditText
     private lateinit var radioGroup: RadioGroup
     private lateinit var btnRegister: Button
     private lateinit var firebaseAuth : FirebaseAuth
@@ -40,6 +44,33 @@ class SignUpFragment : Fragment(R.layout.fragment_sign_up) {
         etPhone = view.findViewById(R.id.etPhone)
         radioGroup = view.findViewById(R.id.radioGroup)
         btnRegister = view.findViewById(R.id.btnRegister)
+
+        etPassword.setText("")
+        etPassword.setSelection(0)
+
+        etPassword.setOnFocusChangeListener { _, hasFocus ->
+            if (hasFocus) {
+                etPassword.postDelayed({
+                    val imm = requireContext().getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+                    imm.showSoftInput(etPassword, InputMethodManager.SHOW_IMPLICIT)
+                }, 100)
+            }
+        }
+
+        etPassword.setOnClickListener {
+            etPassword.isFocusableInTouchMode = true
+            etPassword.isFocusable = true
+            etPassword.requestFocus()
+        }
+
+        etPhone.setOnFocusChangeListener { _, hasFocus ->
+            if (hasFocus) {
+                etPhone.postDelayed({
+                    val imm = requireContext().getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+                    imm.showSoftInput(etPhone, InputMethodManager.SHOW_IMPLICIT)
+                }, 100)
+            }
+        }
 
         radioGroup.setOnCheckedChangeListener { _: RadioGroup?, _: Int ->
             btnRegister.isEnabled =
@@ -73,11 +104,23 @@ class SignUpFragment : Fragment(R.layout.fragment_sign_up) {
 
                                     val uid = it.result.user?.uid.toString()
                                     database.child(uid).setValue(account)
-                                    val intent = Intent(this.context, MainActivity::class.java)
-                                    intent.putExtra("uid", uid)
-                                    intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
-                                    startActivity(intent)
-                                    requireActivity().finish()
+                                    if (userType == "Organizer"){
+                                        val intent = Intent(this.context, OrganizerActivity::class.java)
+                                        intent.putExtra("email", email)
+                                        intent.putExtra("uid", uid)
+                                        intent.putExtra("userType", userType)
+                                        intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+                                        startActivity(intent)
+                                        requireActivity().finish()
+                                    } else {
+                                        val intent = Intent(this.context, MainActivity::class.java)
+                                        intent.putExtra("email", email)
+                                        intent.putExtra("uid", uid)
+                                        intent.putExtra("userType", userType)
+                                        intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+                                        startActivity(intent)
+                                        requireActivity().finish()
+                                    }
                                 } else {
                                     exceptionHandler(it.exception)
                                 }
