@@ -16,6 +16,7 @@ import android.widget.TextView
 import androidx.appcompat.content.res.AppCompatResources
 import com.example.kernel.Components.EventData
 import com.example.kernel.R
+import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.android.material.textfield.TextInputEditText
 import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.FirebaseDatabase
@@ -23,7 +24,7 @@ import java.util.Calendar
 
 class EventFragment : Fragment(R.layout.fragment_event) {
 
-    private lateinit var btnAddEvent : Button
+    private lateinit var btnAddEvent : FloatingActionButton
     private lateinit var database: DatabaseReference
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {

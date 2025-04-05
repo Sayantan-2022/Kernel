@@ -21,11 +21,13 @@ import com.example.kernel.Components.SentimentApiInterface
 import com.example.kernel.Components.SentimentData
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
+import okhttp3.OkHttpClient
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
+import java.util.concurrent.TimeUnit
 
 class LiveChatActivity : AppCompatActivity() {
     private lateinit var adapter: ChatAdapter
@@ -87,32 +89,37 @@ class LiveChatActivity : AppCompatActivity() {
             }
     }
 
-
     private fun fetchsentiment(text: String) {
+        val client = OkHttpClient.Builder()
+            .connectTimeout(60, TimeUnit.SECONDS) // Increase connection timeout
+            .readTimeout(60, TimeUnit.SECONDS) // Increase read timeout
+            .writeTimeout(60, TimeUnit.SECONDS) // Increase write timeout
+            .build()
+
         val retrofit = Retrofit.Builder()
             .baseUrl("https://senti-api-6.onrender.com/")
             .addConverterFactory(GsonConverterFactory.create())
+            .client(client) // Set the custom OkHttpClient
             .build()
 
         val api = retrofit.create(SentimentApiInterface::class.java)
         api.analyzeText(InputText(text)).enqueue(object : Callback<SentimentData> {
             override fun onResponse(call: Call<SentimentData>, response: Response<SentimentData>) {
+                Log.d("Api AI/ML", "Response: $response")
                 if (response.isSuccessful) {
                     val result = response.body()
                     if (result != null) {
                         Log.d("Sentiment", "SUCCESS: Sentiment: ${result.sentiment}, Alert: ${result.alert}")
-
-                        val sentimentMessage = SentimentData(
-                            text = text,
-                            sentiment = result.sentiment,
-                            alert = result.alert,
-
+                        val sentimentMap = mapOf(
+                            "text" to text,
+                            "sentiment" to result.sentiment,
+                            "alert" to result.alert,
                         )
 
                         Firebase.firestore.collection("events")
                             .document(eventId)
                             .collection("Sentiments")
-                            .add(sentimentMessage)
+                            .add(sentimentMap)
                     } else {
                         Log.e("Sentiment", "SUCCESS but empty body")
                     }
@@ -126,7 +133,4 @@ class LiveChatActivity : AppCompatActivity() {
             }
         })
     }
-
-
-
 }
