@@ -29,7 +29,6 @@
         app:cbn_selectedIconColor="@color/white"
         app:cbn_titleColor="@color/white"
         android:layout_alignParentBottom="true"
-
         android:elevation="200dp"
         android:animateLayoutChanges="true"
         android:background="@color/white"
