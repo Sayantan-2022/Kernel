@@ -12,9 +12,11 @@ import android.widget.TextView
 import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
 import com.example.kernel.R
+import com.google.firebase.auth.FirebaseAuth
 
 class WelcomeScreen : AppCompatActivity() {
 
+    private lateinit var firebaseAuth : FirebaseAuth
     private lateinit var textSwitcher : TextSwitcher
     private lateinit var btnLogin: Button
     private lateinit var tvCreate: TextView
@@ -57,6 +59,19 @@ class WelcomeScreen : AppCompatActivity() {
             intent = Intent(this, SignInUp::class.java)
             startActivity(intent)
         }
+
+        firebaseAuth = FirebaseAuth.getInstance()
+
+        Handler().postDelayed({
+            if (firebaseAuth.currentUser != null) {
+                val intent = Intent(this, MainActivity::class.java)
+                startActivity(intent)
+            } else {
+                val intent = Intent(this, WelcomeScreen::class.java)
+                startActivity(intent)
+            }
+            finish()
+        }, 3000)
     }
 
     private fun startTextSwitching() {
