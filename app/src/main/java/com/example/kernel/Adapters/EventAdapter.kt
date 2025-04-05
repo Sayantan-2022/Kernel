@@ -71,6 +71,7 @@ class EventAdapter(val context: Context, private var list: ArrayList<EventData>)
             intent.putExtra("eventName", currentItem.eventTitle)
             intent.putExtra("eventDate", currentItem.date)
             intent.putExtra("eventTime", currentItem.time)
+            intent.putExtra("eventId", currentItem.eventId)
             context.startActivity(intent)
         }
 

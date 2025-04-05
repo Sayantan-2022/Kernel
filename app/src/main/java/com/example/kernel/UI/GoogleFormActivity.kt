@@ -1,76 +1,67 @@
 package com.example.kernel.UI
 
-import android.content.Context
 import android.os.Bundle
 import android.util.Log
-import android.webkit.WebView
-import android.webkit.WebViewClient
+import android.widget.Button
+import android.widget.EditText
+import android.widget.TextView
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.view.ViewCompat
-import androidx.core.view.WindowInsetsCompat
-import com.android.volley.Request
-import com.android.volley.toolbox.JsonObjectRequest
-import com.android.volley.toolbox.Volley
 import com.example.kernel.R
-import org.json.JSONObject
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.firestore.FirebaseFirestore
 
 class GoogleFormActivity : AppCompatActivity() {
 
-    private lateinit var webView: WebView
+    private lateinit var tvEventName: TextView
+    private lateinit var tvEventDate: TextView
+    private lateinit var tvEventTime: TextView
+    private lateinit var feedbackEditText: EditText
+    private lateinit var submitButton: Button
+
+    private val db = FirebaseFirestore.getInstance()
+    private val currentUserId = FirebaseAuth.getInstance().currentUser?.uid ?: "Anonymous"
+    private val googleFormUrl = "https://docs.google.com/forms/d/e/1ta9lvGYcnyANctpgVoYUZV0UjuTZIdcTs3hsnJ1rpiY/formResponse"
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_google_form)
-        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main)) { v, insets ->
-            val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
-            v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
-            insets
-        }
-
-        webView = findViewById(R.id.webView)
 
         val eventName = intent.getStringExtra("eventName")
         val eventDate = intent.getStringExtra("eventDate")
         val eventTime = intent.getStringExtra("eventTime")
+        val eventId = intent.getStringExtra("eventId")
 
-        if (eventName != null) {
-            if (eventDate != null) {
-                if (eventTime != null) {
-                    createGoogleForm(eventName, eventDate, eventTime, this) { formUrl ->
-                        if (formUrl != null) {
-                            webView.webViewClient = WebViewClient()
-                            webView.apply {
-                                settings.javaScriptEnabled = true
-                                loadUrl(formUrl.toString())
-                            }
-                        } else {
-                            Log.e("GoogleForm", "Failed to create form")
-                        }
-                    }
-                }
-            }
-        }
+        tvEventName = findViewById(R.id.tvEventTitle)
+        tvEventDate = findViewById(R.id.tvEventDate)
+        tvEventTime = findViewById(R.id.tvEventTime)
+        feedbackEditText = findViewById(R.id.feedbackEditText)
+        submitButton = findViewById(R.id.submitButton)
+
+        tvEventName.text = eventName
+        tvEventDate.text = eventDate
+        tvEventTime.text = eventTime
+
+        submitButton.setOnClickListener { submitFeedback(eventId) }
     }
 
-    private fun createGoogleForm(eventName: String, eventDate: String, eventTime: String, context: Context, callback: (String?) -> Unit) {
-        val url = "https://script.google.com/macros/s/AKfycbw98DwgJk0a074KhPWOT__Cut7YieBTOQyN0LuFQ7lR3eI5EcVXHH-d7BXPzF4fANgLJw/exec"
-        val requestBody = JSONObject()
-        requestBody.put("eventName", eventName)
-        requestBody.put("eventDate", eventDate)
-        requestBody.put("eventTime", eventTime)
+    private fun submitFeedback(eventId: String?) {
+        val feedback = feedbackEditText.text.toString().trim()
 
-        val request = JsonObjectRequest(
-            Request.Method.POST, url, requestBody,
-            { response ->
-                val formUrl = response.getString("formUrl")
-                callback(formUrl)
-            },
-            { _ ->
-                callback(null)
-            }
+        if (feedback.isEmpty()) {
+            feedbackEditText.error = "Please enter!"
+            return
+        }
+
+        // Save to Firestore
+        val feedbackData = hashMapOf(
+            "feedback" to feedback,
+            "currentUserId" to currentUserId,
+            "timestamp" to com.google.firebase.firestore.FieldValue.serverTimestamp()
         )
 
-        Volley.newRequestQueue(context).add(request)
+            db.collection("events").document("$eventId").collection("feedbacks").add(feedbackData)
+            .addOnSuccessListener { Toast.makeText(this, "Saved to Firestore", Toast.LENGTH_SHORT).show() }
+            .addOnFailureListener { e -> Log.e("Firestore", "Error saving", e) }
     }
-
 }
