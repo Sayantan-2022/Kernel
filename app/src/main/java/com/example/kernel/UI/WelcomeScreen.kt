@@ -61,17 +61,6 @@ class WelcomeScreen : AppCompatActivity() {
         }
 
         firebaseAuth = FirebaseAuth.getInstance()
-
-        Handler().postDelayed({
-            if (firebaseAuth.currentUser != null) {
-                val intent = Intent(this, MainActivity::class.java)
-                startActivity(intent)
-            } else {
-                val intent = Intent(this, WelcomeScreen::class.java)
-                startActivity(intent)
-            }
-            finish()
-        }, 3000)
     }
 
     private fun startTextSwitching() {
