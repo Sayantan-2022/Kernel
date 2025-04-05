@@ -1,6 +1,7 @@
 package com.example.kernel.UI
 
 import android.os.Bundle
+import android.util.Log
 import android.widget.EditText
 import android.widget.ImageButton
 import android.widget.LinearLayout
@@ -15,7 +16,14 @@ import com.google.firebase.Timestamp
 import com.example.kernel.R
 import com.example.kernel.UI.Fragments.ChatAdapter
 import com.example.kernel.Components.ChatMessage
+import com.example.kernel.Components.InputText
+import com.example.kernel.Components.SentimentApiInterface
+import com.example.kernel.Components.SentimentData
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.firestore.FirebaseFirestore
+import retrofit2.Call
+import retrofit2.Callback
+import retrofit2.Response
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 
@@ -56,12 +64,14 @@ class LiveChatActivity : AppCompatActivity() {
 
     private fun sendMessage(text: String) {
         val message = ChatMessage(currentUserId, text,Timestamp.now())
-        Firebase.firestore.collection("events")
+        FirebaseFirestore.getInstance().collection("events")
             .document(eventId)
             .collection("chats")
             .add(message)
+        fetchsentiment(text)
 
     }
+
 
     private fun listenForMessages() {
         Firebase.firestore.collection("events")
@@ -78,11 +88,45 @@ class LiveChatActivity : AppCompatActivity() {
     }
 
 
-    private fun fetchsentiment(){
+    private fun fetchsentiment(text:String){
         val retrofit = Retrofit.Builder()
-            .baseUrl("https://senti-api-6.onrender.com/analyze/")
+            .baseUrl("https://senti-api-6.onrender.com/")
             .addConverterFactory(GsonConverterFactory.create())
             .build()
+        val api = retrofit.create(SentimentApiInterface::class.java)
+        api.analyzeText(InputText(text)).enqueue(object : Callback<SentimentData> {
+            override fun onResponse(
+                call: Call<SentimentData>,
+                response: Response<SentimentData>
+            ) {
+                if (response.isSuccessful) {
+                    val result = response.body()
+                    if (result != null) {
+                        Log.d("Sentiment", "SUCCESS: Sentiment: ${result.sentiment}, Alert: ${result.alert}")
+                        val sentimentMap = mapOf(
+                            "text" to text,
+                            "sentiment" to result.sentiment,
+                            "alert" to result.alert,
+                        )
+
+                        Firebase.firestore.collection("events")
+                            .document(eventId)
+                            .collection("Sentiments")
+                            .add(sentimentMap)
+                    } else {
+                        Log.e("Sentiment", "SUCCESS but empty body")
+                    }
+                } else {
+                    Log.e("Sentiment", "API Error: ${response.code()} - ${response.errorBody()?.string()}")
+                }
+            }
+
+            override fun onFailure(call: Call<SentimentData>, t: Throwable) {
+                Log.e("API Error", t.message ?: "Unknown error")
+
+            }
+
+        })
     }
 
 

@@ -1,5 +1,9 @@
 package com.example.kernel.Components
 
 data class SentimentData(
-    var review:String="",
+    var text :String ="",
+    var sentiment:String="",
     var alert:String="")
+
+
+

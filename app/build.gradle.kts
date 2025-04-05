@@ -61,21 +61,21 @@ dependencies {
     //Custom Navigation Bar
     implementation(libs.curvedbottomnavigation)
 
-    //Firebase Services
-    implementation(platform(libs.firebase.bom))
-    implementation(libs.firebase.database)
-    implementation(libs.firebase.auth)
+    implementation(platform("com.google.firebase:firebase-bom:33.12.0"))
+    implementation("com.google.firebase:firebase-auth-ktx")
+    implementation("com.google.firebase:firebase-database-ktx")
+    implementation("com.google.firebase:firebase-firestore-ktx")
+    implementation("com.google.firebase:firebase-messaging")
+    implementation("com.github.bumptech.glide:glide:4.12.0")
+    // Google Sign-In (Play Services)
+    implementation("com.google.android.gms:play-services-auth:21.3.0")
 
 
     implementation("com.squareup.retrofit2:retrofit:2.9.0")
     implementation("com.squareup.retrofit2:converter-gson:2.9.0")
 
-    //firestore
-    implementation ("com.google.firebase:firebase-firestore-ktx")
-    implementation ("com.google.firebase:firebase-messaging")
 
 
-    //google authorization services
-    implementation(libs.play.services.auth)
-    implementation(libs.googleid)
+
+
 }
