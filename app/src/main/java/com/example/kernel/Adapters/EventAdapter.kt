@@ -7,11 +7,13 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.animation.AnimationUtils
+import android.widget.Button
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.example.kernel.Components.ChatMessage
 import com.example.kernel.Components.EventData
 import com.example.kernel.R
+import com.example.kernel.UI.GoogleFormActivity
 import com.example.kernel.UI.LiveChatActivity
 
 class EventAdapter(val context: Context, private var list: ArrayList<EventData>) : RecyclerView.Adapter<EventAdapter.EventViewHolder>(){
@@ -58,13 +60,19 @@ class EventAdapter(val context: Context, private var list: ArrayList<EventData>)
         holder.eventTime.text=currentItem.time
         holder.eventVenue.text=currentItem.venue
 
-
         holder.liveChatButton.setOnClickListener {
             val intent = Intent(context, LiveChatActivity::class.java)
             intent.putExtra("eventId", currentItem.eventId)
             context.startActivity(intent)
         }
 
+        holder.feedbackButton.setOnClickListener {
+            val intent = Intent(context, GoogleFormActivity::class.java)
+            intent.putExtra("eventName", currentItem.eventTitle)
+            intent.putExtra("eventDate", currentItem.date)
+            intent.putExtra("eventTime", currentItem.time)
+            context.startActivity(intent)
+        }
 
         /*Glide.with(holder.itemView.context)
             .load(currentItem.thumbnail)
@@ -84,6 +92,7 @@ class EventAdapter(val context: Context, private var list: ArrayList<EventData>)
         var eventTime: TextView = itemView.findViewById(R.id.tv_event_time)
         var eventVenue: TextView = itemView.findViewById(R.id.tv_event_venue)
         val liveChatButton: View = itemView.findViewById(R.id.live_chat_button)
+        val feedbackButton: Button = itemView.findViewById(R.id.btn_feedback)
 
 
         init {
